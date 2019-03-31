@@ -1,4 +1,7 @@
 package model;
 
-public class Space {
+public abstract class Space {
+
+    private Player[] players;
+
 }
