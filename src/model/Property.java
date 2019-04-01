@@ -6,7 +6,7 @@ public abstract class Property extends Space {
     Player owner;
     int price;
 
-    public Property(String name, int price) {
+    Property(String name, int price) {
         this.name = name;
         this.price = price;
     }
