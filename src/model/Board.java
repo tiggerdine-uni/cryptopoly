@@ -1,5 +1,6 @@
 package model;
 
+// TODO make Board a singleton
 public class Board {
 
     Space[] spaces;
@@ -15,4 +16,13 @@ public class Board {
         Board board = new Board();
     }
 
+    // TODO railroadsOwned()
+    public static int railroadsOwned(Player owner) {
+        return 0;
+    }
+
+    // TODO utilitiesOwned()
+    public static int utilitiesOwned(Player owner) {
+        return 0;
+    }
 }

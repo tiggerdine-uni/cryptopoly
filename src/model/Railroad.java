@@ -6,9 +6,15 @@ public class Railroad extends Property {
         super(name, price);
     }
 
-    // TODO getRent()
     int getRent() {
-        return 0;
+        /* railroadsOwned   25 * 2 ^ (railroadsOwned - 1)
+           1                25
+           2                50
+           3                100
+           4                200
+           5*               400
+           6*               800                           */
+        return (int) (25 * Math.pow(2, Board.railroadsOwned(owner) - 1));
     }
 
 }
