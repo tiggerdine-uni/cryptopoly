@@ -19,7 +19,7 @@ public class Utility extends Property {
            2                10                       10
            3*               16                       18
            4*               22                       28                                    */
-        return utilitiesOwned * (utilitiesOwned + 3); // TODO * 2d6
+        return utilitiesOwned * (utilitiesOwned + 3) * Dice.add();
     }
 
 }
