@@ -26,6 +26,7 @@ public class Board {
         System.out.println(((Property) instance.spaces[5]).getRent());
         ((Property) instance.spaces[12]).owner = player;
         ((Property) instance.spaces[28]).owner = player;
+        Dice.roll();
         System.out.println(((Property) instance.spaces[12]).getRent());
     }
 
