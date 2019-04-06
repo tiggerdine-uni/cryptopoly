@@ -11,14 +11,6 @@ public abstract class Property extends Space {
         this.price = price;
     }
 
-    String getName() {
-        return name;
-    }
-
-    int getPrice() {
-        return price;
-    }
-
     abstract int getRent();
 
 }
