@@ -8,7 +8,7 @@ public class Board {
 
     private Board() {
         spaces = new Space[40];
-        spaces[1] = new Street("Old Kent Road", 60, Colour.BROWN, 2);
+        spaces[1] = new Street("Old Kent Road", 60, Colour.BROWN, new int[]{2, 10, 30, 90, 160, 250});
         spaces[5] = new Railroad("King's Cross Station", 200);
         spaces[12] = new Utility("Electric Company", 150);
         spaces[15] = new Railroad("Marylebone Station", 200);
@@ -18,6 +18,11 @@ public class Board {
     }
 
     public static void main(String[] args) {
+        for(int i = 1; i <= 5; i++) {
+            System.out.print(((Property) instance.spaces[1]).getRent() + " ");
+            ((Street) instance.spaces[1]).building = Building.values()[i];
+        }
+        System.out.println(((Property) instance.spaces[1]).getRent());
         Player player = new Player();
         ((Property) instance.spaces[5]).owner = player;
         ((Property) instance.spaces[15]).owner = player;
@@ -40,4 +45,5 @@ public class Board {
     static Utility[] getUtilities() {
         return new Utility[]{(Utility) instance.spaces[12], (Utility) instance.spaces[28]};
     }
+
 }
