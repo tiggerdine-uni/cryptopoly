@@ -1,93 +1,210 @@
 package view;
 
+import controller.Controller;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Board extends JPanel implements ActionListener {
+/**
+ * A board.
+ */
+@SuppressWarnings("SuspiciousNameCombination")
+class Board extends JPanel {
 
-    public static final int FRAME_WIDTH = 720;
-    public static final int FRAME_HEIGHT = FRAME_WIDTH;
-    public static final int BUTTON_WIDTH = FRAME_WIDTH / 12;
-    public static final int BUTTON_HEIGHT = FRAME_HEIGHT / 8;
+    static final int WIDTH = 720;
+    static final int HEIGHT = WIDTH;
 
-    public Board() {
-        super(new BorderLayout());
+    private MyView v;
+    Controller c;
+
+    List<JButton> spaces;
+    List<Token> tokens;
+    private House[][] houses;
+    private Hotel[] hotels;
+
+    /**
+     * Creates a board.
+     *
+     * @param v
+     */
+    Board(MyView v) {
+        this.v = v;
+
         setLayout(null);
 
-        JButton button = new JButton("0");
-        button.setBounds(FRAME_WIDTH - BUTTON_HEIGHT, FRAME_HEIGHT - BUTTON_HEIGHT, BUTTON_HEIGHT, BUTTON_HEIGHT);
-        add(button);
-        button.addActionListener(this);
+        spaces();
+        tokens();
+        houses = new House[40][4];
+        hotels = new Hotel[40];
 
+        try {
+            File file = new File("res\\board.bmp");
+            BufferedImage image = ImageIO.read(file);
+            ImageIcon icon = new ImageIcon(image);
+            JLabel label = new JLabel(icon);
+            add(label);
+            label.setSize(WIDTH, HEIGHT);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void spaces() {
+        spaces = new ArrayList<>();
+
+        // 0
+        JButton button = new JButton();
+        button.setName("0");
+        button.setBounds(Board.WIDTH - Space.HEIGHT, Board.HEIGHT - Space.HEIGHT, Space.HEIGHT, Space.HEIGHT);
+        spaces.add(button);
+
+        // 1-9
         for (int i = 1; i <= 9; i++) {
-            button = new JButton(String.valueOf(i));
-            button.setBounds(FRAME_WIDTH - BUTTON_HEIGHT - i * BUTTON_WIDTH, FRAME_HEIGHT - BUTTON_HEIGHT, BUTTON_WIDTH, BUTTON_HEIGHT);
-            add(button);
-            button.addActionListener(this);
+            button = new JButton();
+            button.setName(Integer.toString(i));
+            button.setBounds(Board.WIDTH - Space.HEIGHT - i * Space.WIDTH, Board.HEIGHT - Space.HEIGHT, Space.WIDTH, Space.HEIGHT);
+            spaces.add(button);
         }
 
-        button = new JButton("10");
-        button.setBounds(0, FRAME_HEIGHT - BUTTON_HEIGHT, BUTTON_HEIGHT, BUTTON_HEIGHT);
-        add(button);
-        button.addActionListener(this);
+        // 10
+        button = new JButton();
+        button.setName("10");
+        button.setBounds(0, Board.HEIGHT - Space.HEIGHT, Space.HEIGHT, Space.HEIGHT);
+        spaces.add(button);
 
+        // 11-19
         for (int i = 11; i <= 19; i++) {
-            button = new JButton(String.valueOf(i));
-            button.setBounds(0, FRAME_HEIGHT - BUTTON_HEIGHT - (i - 10) * BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_WIDTH);
-            add(button);
-            button.addActionListener(this);
+            button = new JButton();
+            button.setName(Integer.toString(i));
+            button.setBounds(0, Board.HEIGHT - Space.HEIGHT - (i - 10) * Space.WIDTH, Space.HEIGHT, Space.WIDTH);
+            spaces.add(button);
         }
 
-        button = new JButton("20");
-        button.setBounds(0, 0, BUTTON_HEIGHT, BUTTON_HEIGHT);
-        add(button);
-        button.addActionListener(this);
+        // 20
+        button = new JButton();
+        button.setName("20");
+        button.setBounds(0, 0, Space.HEIGHT, Space.HEIGHT);
+        spaces.add(button);
 
+        // 21-29
         for (int i = 21; i <= 29; i++) {
-            button = new JButton(String.valueOf(i));
-            button.setBounds(BUTTON_HEIGHT + (i - 21) * BUTTON_WIDTH, 0, BUTTON_WIDTH, BUTTON_HEIGHT);
-            add(button);
-            button.addActionListener(this);
+            button = new JButton();
+            button.setName(Integer.toString(i));
+            button.setBounds(Space.HEIGHT + (i - 21) * Space.WIDTH, 0, Space.WIDTH, Space.HEIGHT);
+            spaces.add(button);
         }
 
-        button = new JButton("30");
-        button.setBounds(FRAME_WIDTH - BUTTON_HEIGHT, 0, BUTTON_HEIGHT, BUTTON_HEIGHT);
-        add(button);
-        button.addActionListener(this);
+        // 30
+        button = new JButton();
+        button.setName("30");
+        button.setBounds(Board.WIDTH - Space.HEIGHT, 0, Space.HEIGHT, Space.HEIGHT);
+        spaces.add(button);
 
+        // 31-39
         for (int i = 31; i <= 39; i++) {
-            button = new JButton(String.valueOf(i));
-            button.setBounds(FRAME_WIDTH - BUTTON_HEIGHT, BUTTON_HEIGHT + (i - 31) * BUTTON_WIDTH, BUTTON_HEIGHT, BUTTON_WIDTH);
-            add(button);
-            button.addActionListener(this);
+            button = new JButton();
+            button.setName(Integer.toString(i));
+            button.setBounds(Board.WIDTH - Space.HEIGHT, Space.HEIGHT + (i - 31) * Space.WIDTH, Space.HEIGHT, Space.WIDTH);
+            spaces.add(button);
+        }
+
+        for (JButton b : spaces) {
+            add(b);
+            b.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int space = Integer.parseInt(((JComponent) e.getSource()).getName());
+                    v.showDetails(c.inspectSpace(space));
+                    v.setPlayer("");
+                    v.setSpace(space);
+                }
+            });
+            b.setOpaque(false);
+            b.setContentAreaFilled(false);
+            b.setBorderPainted(false);
+            b.setLayout(null);
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        System.out.print(e.getActionCommand() + " ");
+    private void tokens() {
+        tokens = new ArrayList<>();
+
+        Token token = new Token(0, "res\\token1.bmp", this);
+        token.setSize(Token.WIDTH, Token.HEIGHT);
+        tokens.add(token);
+
+        token = new Token(1, "res\\token2.bmp", this);
+        token.setSize(Token.WIDTH, Token.HEIGHT);
+        tokens.add(token);
+
+        for (Token t : tokens) {
+            t.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String player = c.getNameOfPlayer(t.player);
+                    v.showDetails(c.inspectPlayer(player));
+                    v.setPlayer(player);
+                    v.setSpace(-1);
+                }
+            });
+        }
     }
 
-    private static void createAndShowGUI() {
-        JFrame frame = new JFrame("Monopoly");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    void addHouse(int space, int house) {
+        House h = new House(space);
+        h.setLocation(House.getLocation(space, house));
+        h.setSize(House.WIDTH, House.HEIGHT);
+        add(h, 1);
+        houses[space][house] = h;
 
-        JComponent board = new Board();
-        frame.setContentPane(board);
-
-        frame.pack();
-        frame.setSize(FRAME_WIDTH + 16, FRAME_HEIGHT + 39);
-        frame.setVisible(true);
+        spaces.get(space).repaint();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createAndShowGUI();
-            }
-        });
+    void addHotel(int space) {
+        for (House house : houses[space]) {
+            remove(house);
+        }
+
+        repaint();
+        Hotel hotel = new Hotel(space);
+
+        if (space < 20) {
+            hotel.setLocation(House.getLocation(space, 1));
+        } else {
+            hotel.setLocation(House.getLocation(space, 2));
+        }
+
+        if (space < 10 || (space >= 20 && space < 30)) {
+            hotel.setSize(Hotel.WIDTH, Hotel.HEIGHT);
+        } else {
+            hotel.setSize(Hotel.HEIGHT, Hotel.WIDTH);
+        }
+
+        add(hotel, 1);
+        hotels[space] = hotel;
+
+        spaces.get(space).repaint();
     }
 
+    void removeHouse(int space, int house) {
+        remove(houses[space][house]);
+        houses[space][house] = null;
+        spaces.get(space).repaint();
+    }
+
+    void removeHotel(int space) {
+        remove(hotels[space]);
+        for (int i = 0; i < 4; i++) {
+            addHouse(space, i);
+        }
+        hotels[space] = null;
+        spaces.get(space).repaint();
+    }
 }
